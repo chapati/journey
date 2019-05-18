@@ -46,7 +46,7 @@ func slugFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return []byte{}
 }
 
-func currentFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func currentFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if len(values.Blog.NavigationItems) != 0 {
 		currUrl := values.Blog.NavigationItems[values.CurrentNavigationIndex].Url
 		// Since the router rewrites all urls with a trailing slash, add / to url if not already there
@@ -60,7 +60,7 @@ func currentFunc(helper *structure.Helper, values *structure.RequestData) []byte
 	return []byte{}
 }
 
-func navigationFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func navigationFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if len(values.Blog.NavigationItems) == 0 {
 		return []byte{}
 	} else if templateHelper, ok := compiledTemplates.m["navigation"]; ok {
@@ -100,14 +100,14 @@ func blockFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return []byte{}
 }
 
-func paginationFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func paginationFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if templateHelper, ok := compiledTemplates.m["pagination"]; ok {
 		return executeHelper(templateHelper, values, values.CurrentHelperContext)
 	}
 	return []byte{}
 }
 
-func paginationDotTotalFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func paginationDotTotalFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentTemplate == 0 { // index
 		return []byte(strconv.FormatInt(values.Blog.PostCount, 10))
 	} else if values.CurrentTemplate == 3 { // author
@@ -156,14 +156,14 @@ func pluralFunc(helper *structure.Helper, values *structure.RequestData) []byte 
 	return []byte{}
 }
 
-func prevFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func prevFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentIndexPage > 1 {
 		return []byte{1}
 	}
 	return []byte{}
 }
 
-func nextFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func nextFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	var count int64
 	var err error
 	if values.CurrentTemplate == 0 { // index
@@ -188,11 +188,11 @@ func nextFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return []byte{}
 }
 
-func pageFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func pageFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	return []byte(strconv.Itoa(values.CurrentIndexPage))
 }
 
-func pagesFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func pagesFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	var count int64
 	var err error
 	if values.CurrentTemplate == 0 { // index
@@ -296,21 +296,21 @@ func pageUrlFunc(helper *structure.Helper, values *structure.RequestData) []byte
 	return []byte{}
 }
 
-func extendFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func extendFunc(helper *structure.Helper, _ *structure.RequestData) []byte {
 	if len(helper.Arguments) != 0 {
 		return []byte(helper.Arguments[0].Name)
 	}
 	return []byte{}
 }
 
-func featuredFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func featuredFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.Posts[values.CurrentPostIndex].IsFeatured {
 		return []byte{1}
 	}
 	return []byte{}
 }
 
-func bodyClassFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func bodyClassFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentTemplate == 1 { // post
 		// TODO: is there anything else that needs to be output here?
 		var buffer bytes.Buffer
@@ -364,7 +364,7 @@ func ghostHeadFunc(helper *structure.Helper, values *structure.RequestData) []by
 	return buffer.Bytes()
 }
 
-func ghostFootFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func ghostFootFunc(_ *structure.Helper, _ *structure.RequestData) []byte {
 	// TODO: customized code injection
 	return []byte{}
 }
@@ -402,7 +402,7 @@ func metaDescriptionFunc(helper *structure.Helper, values *structure.RequestData
 	return []byte{}
 }
 
-func bodyFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func bodyFunc(helper *structure.Helper, _ *structure.RequestData) []byte {
 	return helper.Block
 }
 
@@ -496,7 +496,7 @@ func postFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return executeHelper(helper, values, 1) // context = post
 }
 
-func postsFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func postsFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if len(values.Posts) > 0 {
 		return []byte{1}
 	}
@@ -609,7 +609,7 @@ func titleFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return evaluateEscape(values.Posts[values.CurrentPostIndex].Title, helper.Unescaped)
 }
 
-func contentFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func contentFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	// TODO: is content always unescaped? seems like it...
 	return values.Posts[values.CurrentPostIndex].Html
 }
@@ -683,7 +683,7 @@ func dateFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return evaluateEscape(date.FormatDate(timeFormat, &currentDate), helper.Unescaped)
 }
 
-func atFirstFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func atFirstFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentHelperContext == 1 { // post
 		if values.CurrentPostIndex == 0 {
 			return []byte{1}
@@ -699,7 +699,7 @@ func atFirstFunc(helper *structure.Helper, values *structure.RequestData) []byte
 	return []byte{}
 }
 
-func atLastFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func atLastFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentHelperContext == 1 { // post
 		if values.CurrentPostIndex == (len(values.Posts) - 1) {
 			return []byte{1}
@@ -715,7 +715,7 @@ func atLastFunc(helper *structure.Helper, values *structure.RequestData) []byte 
 	return []byte{}
 }
 
-func atEvenFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func atEvenFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentHelperContext == 1 { // post
 		// First post (index 0) needs to be odd
 		if values.CurrentPostIndex%2 == 1 {
@@ -733,7 +733,7 @@ func atEvenFunc(helper *structure.Helper, values *structure.RequestData) []byte 
 	return []byte{}
 }
 
-func atOddFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func atOddFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentHelperContext == 1 { // post
 		// First post (index 0) needs to be odd
 		if values.CurrentPostIndex%2 == 0 {
@@ -793,7 +793,7 @@ func tagDotSlugFunc(helper *structure.Helper, values *structure.RequestData) []b
 	}
 }
 
-func idFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func idFunc(_ *structure.Helper, values *structure.RequestData) []byte {
 	return []byte(strconv.FormatInt(values.Posts[values.CurrentPostIndex].Id, 10))
 }
 

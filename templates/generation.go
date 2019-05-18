@@ -203,7 +203,7 @@ func compileFile(fileName string) error {
 	return nil
 }
 
-func inspectTemplateFile(filePath string, info os.FileInfo, err error) error {
+func inspectTemplateFile(filePath string, info os.FileInfo, _ error) error {
 	if !info.IsDir() && filepath.Ext(filePath) == ".hbs" {
 		err := compileFile(filePath)
 		if err != nil {

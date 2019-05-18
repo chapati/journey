@@ -49,7 +49,7 @@ func Ghost() {
 	}
 }
 
-func inspectDatabaseFile(filePath string, info os.FileInfo, err error) error {
+func inspectDatabaseFile(filePath string, info os.FileInfo, _ error) error {
 	if !info.IsDir() && filepath.Ext(filePath) == ".db" {
 		err := convertGhostDatabase(filePath)
 		if err != nil {

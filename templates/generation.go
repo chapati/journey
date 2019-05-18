@@ -153,7 +153,7 @@ func findBlock(data []byte, helperName []byte, unescaped bool, startPos int) ([]
 			// Change children, omit else helper
 			elseHelper.Children = children[(index + 1):]
 			// Change Position in children of else helper
-			for indexElse, _ := range elseHelper.Children {
+			for indexElse := range elseHelper.Children {
 				elseHelper.Children[indexElse].Position = elseHelper.Children[indexElse].Position - elseHelper.Position
 			}
 			children = children[:index]

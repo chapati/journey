@@ -61,7 +61,7 @@ func GenerateBlog() error {
 	blog.Url = []byte(configuration.Config.Url)
 	blog.AssetPath = assetPath
 	// Create navigation slugs
-	for index, _ := range blog.NavigationItems {
+	for index := range blog.NavigationItems {
 		blog.NavigationItems[index].Slug = slug.Generate(blog.NavigationItems[index].Label, "navigation")
 	}
 	Blog = blog

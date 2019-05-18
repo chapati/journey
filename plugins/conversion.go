@@ -3,9 +3,9 @@
 package plugins
 
 import (
-	"github.com/kabukky/journey/structure"
-	"github.com/kabukky/journey/structure/methods"
 	"github.com/yuin/gopher-lua"
+	"journey/structure"
+	"journey/structure/methods"
 )
 
 func convertArguments(vm *lua.LState, structureArguments []structure.Helper) *lua.LTable {

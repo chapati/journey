@@ -3,13 +3,13 @@ package database
 import (
 	"database/sql"
 
-	"github.com/kabukky/journey/database/migration"
-	"github.com/kabukky/journey/date"
-	"github.com/kabukky/journey/filenames"
-	"github.com/kabukky/journey/helpers"
-	"github.com/kabukky/journey/structure"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/satori/go.uuid"
+	"journey/database/migration"
+	"journey/date"
+	"journey/filenames"
+	"journey/helpers"
+	"journey/structure"
 )
 
 // Handler for read access

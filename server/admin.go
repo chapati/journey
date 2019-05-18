@@ -379,9 +379,10 @@ func apiUploadHandler(w http.ResponseWriter, r *http.Request, _ map[string]strin
 		// Copy each part to destination.
 		for {
 			part, err := reader.NextPart()
-			if err == io.EOF {
+			if part == nil || err == io.EOF {
 				break
 			}
+
 			// If part.FileName() is empty, skip this iteration.
 			if part.FileName() == "" {
 				continue
@@ -389,20 +390,23 @@ func apiUploadHandler(w http.ResponseWriter, r *http.Request, _ map[string]strin
 			// Folder structure: year/month/randomname
 			currentDate := date.GetCurrentTime()
 			filePath := filepath.Join(filenames.ImagesFilepath, currentDate.Format("2006"), currentDate.Format("01"))
-			if os.MkdirAll(filePath, 0777) != nil {
+			if err = os.MkdirAll(filePath, 0777); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+
 			dst, err := os.Create(filepath.Join(filePath, strconv.FormatInt(currentDate.Unix(), 10)+"_"+uuid.NewV4().String()+filepath.Ext(part.FileName())))
-			defer dst.Close()
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+			defer dst.Close()
+
 			if _, err := io.Copy(dst, part); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+
 			// Rewrite to file path on server
 			filePath = strings.Replace(dst.Name(), filenames.ImagesFilepath, "/images", 1)
 			// Make sure to always use "/" as path separator (to make a valid url that we can use on the blog)

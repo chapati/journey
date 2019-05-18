@@ -205,7 +205,7 @@ func apiPostsHandler(w http.ResponseWriter, r *http.Request, params map[string]s
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonBytes)
+		_, _ = w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -242,7 +242,7 @@ func getApiPostHandler(w http.ResponseWriter, r *http.Request, params map[string
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonBytes)
+		_, _ = w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -281,7 +281,7 @@ func postApiPostHandler(w http.ResponseWriter, r *http.Request, _ map[string]str
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Post created!"))
+		_, _ = w.Write([]byte("Post created!"))
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -326,7 +326,7 @@ func patchApiPostHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Post updated!"))
+		_, _ = w.Write([]byte("Post updated!"))
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -356,7 +356,7 @@ func deleteApiPostHandler(w http.ResponseWriter, r *http.Request, params map[str
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Post deleted!"))
+		_, _ = w.Write([]byte("Post deleted!"))
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -400,7 +400,10 @@ func apiUploadHandler(w http.ResponseWriter, r *http.Request, _ map[string]strin
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			defer dst.Close()
+
+			defer func() {
+				_ = dst.Close()
+			}()
 
 			if _, err := io.Copy(dst, part); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -419,7 +422,7 @@ func apiUploadHandler(w http.ResponseWriter, r *http.Request, _ map[string]strin
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonBytes)
+		_, _ = w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -453,7 +456,7 @@ func apiImagesHandler(w http.ResponseWriter, r *http.Request, params map[string]
 		if len(images) == 0 {
 			// Write empty json array
 			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte("[]"))
+			_, _ = w.Write([]byte("[]"))
 			return
 		}
 		imagesPerPage := 15
@@ -462,7 +465,7 @@ func apiImagesHandler(w http.ResponseWriter, r *http.Request, params map[string]
 		if start > (len(images) - 1) {
 			// Write empty json array
 			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte("[]"))
+			_, _ = w.Write([]byte("[]"))
 			return
 		}
 		if end > len(images) {
@@ -474,7 +477,7 @@ func apiImagesHandler(w http.ResponseWriter, r *http.Request, params map[string]
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonBytes)
+		_, _ = w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -508,7 +511,7 @@ func deleteApiImageHandler(w http.ResponseWriter, r *http.Request, _ map[string]
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Image deleted!"))
+		_, _ = w.Write([]byte("Image deleted!"))
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -530,7 +533,7 @@ func getApiBlogHandler(w http.ResponseWriter, r *http.Request, _ map[string]stri
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonBytes)
+		_, _ = w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -591,7 +594,7 @@ func patchApiBlogHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Blog settings updated!"))
+		_, _ = w.Write([]byte("Blog settings updated!"))
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -632,7 +635,7 @@ func getApiUserHandler(w http.ResponseWriter, r *http.Request, params map[string
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonBytes)
+		_, _ = w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -723,7 +726,7 @@ func patchApiUserHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			logInUser(jsonPost.Name, w)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("User settings updated!"))
+		_, _ = w.Write([]byte("User settings updated!"))
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -747,7 +750,7 @@ func getApiUserIdHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonBytes)
+		_, _ = w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)

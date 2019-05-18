@@ -37,7 +37,9 @@ func main() {
 		if err != nil {
 			log.Fatal("Error: Couldn't open log file: " + err.Error())
 		}
-		defer logFile.Close()
+		defer func() {
+			_ = logFile.Close()
+		}()
 		log.SetOutput(logFile)
 	}
 

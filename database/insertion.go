@@ -22,7 +22,7 @@ func InsertPost(title []byte, slug string, markdown []byte, html []byte, feature
 	}
 	writeDB, err := readDB.Begin()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	var result sql.Result
@@ -32,12 +32,12 @@ func InsertPost(title []byte, slug string, markdown []byte, html []byte, feature
 		result, err = writeDB.Exec(stmtInsertPost, nil, uuid.NewV4().String(), title, slug, markdown, html, featured, isPage, status, metaDescription, image, createdBy, createdAt, createdBy, createdAt, createdBy, nil, nil)
 	}
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	postId, err := result.LastInsertId()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	return postId, writeDB.Commit()
@@ -46,17 +46,17 @@ func InsertPost(title []byte, slug string, markdown []byte, html []byte, feature
 func InsertUser(name []byte, slug string, password string, email []byte, image []byte, cover []byte, createdAt time.Time, createdBy int64) (int64, error) {
 	writeDB, err := readDB.Begin()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	result, err := writeDB.Exec(stmtInsertUser, nil, uuid.NewV4().String(), name, slug, password, email, image, cover, createdAt, createdBy, createdAt, createdBy)
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	userId, err := result.LastInsertId()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	return userId, writeDB.Commit()
@@ -65,12 +65,12 @@ func InsertUser(name []byte, slug string, password string, email []byte, image [
 func InsertRoleUser(roleId int, userId int64) error {
 	writeDB, err := readDB.Begin()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	_, err = writeDB.Exec(stmtInsertRoleUser, nil, roleId, userId)
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	return writeDB.Commit()
@@ -79,17 +79,17 @@ func InsertRoleUser(roleId int, userId int64) error {
 func InsertTag(name []byte, slug string, createdAt time.Time, createdBy int64) (int64, error) {
 	writeDB, err := readDB.Begin()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	result, err := writeDB.Exec(stmtInsertTag, nil, uuid.NewV4().String(), name, slug, createdAt, createdBy, createdAt, createdBy)
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	tagId, err := result.LastInsertId()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return 0, err
 	}
 	return tagId, writeDB.Commit()
@@ -98,12 +98,12 @@ func InsertTag(name []byte, slug string, createdAt time.Time, createdBy int64) (
 func InsertPostTag(postId int64, tagId int64) error {
 	writeDB, err := readDB.Begin()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	_, err = writeDB.Exec(stmtInsertPostTag, nil, postId, tagId)
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	return writeDB.Commit()
@@ -112,12 +112,12 @@ func InsertPostTag(postId int64, tagId int64) error {
 func insertSettingString(key string, value string, settingType string, createdAt time.Time, createdBy int64) error {
 	writeDB, err := readDB.Begin()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	_, err = writeDB.Exec(stmtInsertSetting, nil, uuid.NewV4().String(), key, value, settingType, createdAt, createdBy, createdAt, createdBy)
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	return writeDB.Commit()
@@ -126,12 +126,12 @@ func insertSettingString(key string, value string, settingType string, createdAt
 func insertSettingInt64(key string, value int64, settingType string, createdAt time.Time, createdBy int64) error {
 	writeDB, err := readDB.Begin()
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	_, err = writeDB.Exec(stmtInsertSetting, nil, uuid.NewV4().String(), key, value, settingType, createdAt, createdBy, createdAt, createdBy)
 	if err != nil {
-		writeDB.Rollback()
+		_ = writeDB.Rollback()
 		return err
 	}
 	return writeDB.Commit()

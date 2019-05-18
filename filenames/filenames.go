@@ -10,9 +10,6 @@ import (
 )
 
 var (
-	// Determine the path the Journey executable is in - needed to load relative assets
-	ExecutablePath = determineExecutablePath()
-
 	// Determine the path to the assets folder (default: Journey root folder)
 	AssetPath = determineAssetPath()
 
@@ -31,10 +28,11 @@ var (
 	HttpsCertFilename = filepath.Join(ContentFilepath, "https", "cert.pem")
 	HttpsKeyFilename  = filepath.Join(ContentFilepath, "https", "key.pem")
 
-	//For built-in files (e.g. the admin interface)
-	AdminFilepath  = filepath.Join(ExecutablePath, "built-in", "admin")
-	PublicFilepath = filepath.Join(ExecutablePath, "built-in", "public")
-	HbsFilepath    = filepath.Join(ExecutablePath, "built-in", "hbs")
+	// For built-in files (e.g. the admin interface)
+	BuiltInPath    = determineBuiltInPath()
+	AdminFilepath  = filepath.Join(BuiltInPath, "admin")
+	PublicFilepath = filepath.Join(BuiltInPath, "public")
+	HbsFilepath    = filepath.Join(BuiltInPath, "hbs")
 
 	// For blog  (this is a url string)
 	// TODO: This is not used at the moment because it is still hard-coded into the create database string
@@ -85,6 +83,17 @@ func determineAssetPath() string {
 		return contentPath
 	}
 	return determineExecutablePath()
+}
+
+func determineBuiltInPath() string {
+	if flags.CustomBuiltInPath != "" {
+		builtInPath, err := filepath.Abs(bashPath(flags.CustomBuiltInPath))
+		if err != nil {
+			log.Fatal("Error: Couldn't read custom built-in path: ", err)
+		}
+		return builtInPath
+	}
+	return filepath.Join(determineExecutablePath(), "built-in")
 }
 
 func determineExecutablePath() string {

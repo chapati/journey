@@ -6,16 +6,23 @@ import (
 )
 
 var (
-	Log             = ""
-	LogFlag         = "log"
-	CustomPath      = ""
-	CustomPathFlag  = "custom-path"
+	Log     = ""
+	LogFlag = "log"
+
+	CustomPath     = ""
+	CustomPathFlag = "custom-path"
+
 	IsInDevMode     = false
 	IsInDevModeFlag = "dev"
-	HttpPort        = ""
-	HttpPortFlag    = "http-port"
-	HttpsPort       = ""
-	HttpsPortFlag   = "https-port"
+
+	HttpPort     = ""
+	HttpPortFlag = "http-port"
+
+	HttpsPort     = ""
+	HttpsPortFlag = "https-port"
+
+	CustomBuiltInPath     = ""
+	CustomBuiltInPathFlag = "custom-built-in-path"
 )
 
 func init() {
@@ -41,6 +48,9 @@ func parseFlags() {
 
 	// Check if the http port that was set in the config was overridden by the user
 	flag.StringVar(&HttpsPort, HttpsPortFlag, "", "Use this option to override the HTTPS port that was set in the config.json. Example: -https-port=8081")
+
+	// Check if custom built-in path has been provided by user
+	flag.StringVar(&CustomBuiltInPath, CustomBuiltInPathFlag, "", "Specify a custom path to store builtin files. Read-only access is needed.")
 
 	flag.Parse()
 }

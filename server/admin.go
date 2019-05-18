@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -181,11 +182,17 @@ func apiPostsHandler(w http.ResponseWriter, r *http.Request, params map[string]s
 	userName := authentication.GetUserName(r)
 	if userName != "" {
 		number := params["number"]
+
 		page, err := strconv.Atoi(number)
-		if err != nil || page < 1 {
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		if page < 1 {
+			http.Error(w, fmt.Sprintf("wrong page number: %d", page), http.StatusInternalServerError)
+			return
+		}
+
 		postsPerPage := int64(15)
 		posts, err := database.RetrievePostsForApi(postsPerPage, (int64(page)-1)*postsPerPage)
 		if err != nil {
@@ -213,20 +220,27 @@ func getApiPostHandler(w http.ResponseWriter, r *http.Request, params map[string
 		id := params["id"]
 		// Get post
 		postId, err := strconv.ParseInt(id, 10, 64)
-		if err != nil || postId < 1 {
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		if postId < 1 {
+			http.Error(w, fmt.Sprintf("wrong postId: %d", postId), http.StatusInternalServerError)
+			return
+		}
+
 		post, err := database.RetrievePostById(postId)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		jsonBytes, err := json.Marshal(postToJson(post))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(jsonBytes)
 		return
@@ -327,10 +341,15 @@ func deleteApiPostHandler(w http.ResponseWriter, r *http.Request, params map[str
 		id := params["id"]
 		// Delete post
 		postId, err := strconv.ParseInt(id, 10, 64)
-		if err != nil || postId < 1 {
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		if postId < 1 {
+			http.Error(w, fmt.Sprintf("wrong postId: %d", postId), http.StatusInternalServerError)
+			return
+		}
+
 		err = methods.DeletePost(postId)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -587,8 +606,11 @@ func getApiUserHandler(w http.ResponseWriter, r *http.Request, params map[string
 		}
 		id := params["id"]
 		userIdToGet, err := strconv.ParseInt(id, 10, 64)
-		if err != nil || userIdToGet < 1 {
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		} else if userIdToGet < 1 {
+			http.Error(w, fmt.Sprintf("Incorrect user id: %d", userIdToGet), http.StatusInternalServerError)
 			return
 		} else if userIdToGet != userId { // Make sure the authenticated user is only accessing his/her own data. TODO: Make sure the user is admin when multiple users have been introduced
 			http.Error(w, "You don't have permission to access this data.", http.StatusForbidden)

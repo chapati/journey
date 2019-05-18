@@ -48,12 +48,12 @@ func slugFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 
 func currentFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	if len(values.Blog.NavigationItems) != 0 {
-		url := values.Blog.NavigationItems[values.CurrentNavigationIndex].Url
+		currUrl := values.Blog.NavigationItems[values.CurrentNavigationIndex].Url
 		// Since the router rewrites all urls with a trailing slash, add / to url if not already there
-		if !strings.HasSuffix(url, "/") {
-			url = url + "/"
+		if !strings.HasSuffix(currUrl, "/") {
+			currUrl = currUrl + "/"
 		}
-		if values.CurrentPath == url {
+		if values.CurrentPath == currUrl {
 			return []byte{1}
 		}
 	}

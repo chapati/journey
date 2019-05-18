@@ -558,8 +558,8 @@ func patchApiBlogHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			err = templates.Generate()
 			if err != nil {
 				// If there's an error while generating the new templates, the whole program must be stopped.
-				log.Fatal("Fatal error: Template data couldn't be generated from theme files: " + err.Error())
 				http.Error(w, err.Error(), http.StatusInternalServerError)
+				log.Fatal("Fatal error: Template data couldn't be generated from theme files: " + err.Error())
 				return
 			}
 		}

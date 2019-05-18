@@ -40,9 +40,9 @@ func RetrievePostBySlug(slug string) (*structure.Post, error) {
 	return extractPost(row)
 }
 
-func RetrievePostsByUser(user_id int64, limit int64, offset int64) ([]structure.Post, error) {
+func RetrievePostsByUser(userId int64, limit int64, offset int64) ([]structure.Post, error) {
 	// Retrieve posts
-	rows, err := readDB.Query(stmtRetrievePostsByUser, user_id, limit, offset)
+	rows, err := readDB.Query(stmtRetrievePostsByUser, userId, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -54,9 +54,9 @@ func RetrievePostsByUser(user_id int64, limit int64, offset int64) ([]structure.
 	return *posts, nil
 }
 
-func RetrievePostsByTag(tag_id int64, limit int64, offset int64) ([]structure.Post, error) {
+func RetrievePostsByTag(tagId int64, limit int64, offset int64) ([]structure.Post, error) {
 	// Retrieve posts
-	rows, err := readDB.Query(stmtRetrievePostsByTag, tag_id, limit, offset)
+	rows, err := readDB.Query(stmtRetrievePostsByTag, tagId, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -179,10 +179,10 @@ func RetrieveNumberOfPosts() (int64, error) {
 	return count, nil
 }
 
-func RetrieveNumberOfPostsByUser(user_id int64) (int64, error) {
+func RetrieveNumberOfPostsByUser(userId int64) (int64, error) {
 	var count int64
 	// Retrieve number of posts
-	row := readDB.QueryRow(stmtRetrievePostsCountByUser, user_id)
+	row := readDB.QueryRow(stmtRetrievePostsCountByUser, userId)
 	err := row.Scan(&count)
 	if err != nil {
 		return 0, err
@@ -190,10 +190,10 @@ func RetrieveNumberOfPostsByUser(user_id int64) (int64, error) {
 	return count, nil
 }
 
-func RetrieveNumberOfPostsByTag(tag_id int64) (int64, error) {
+func RetrieveNumberOfPostsByTag(tagId int64) (int64, error) {
 	var count int64
 	// Retrieve number of posts
-	row := readDB.QueryRow(stmtRetrievePostsCountByTag, tag_id)
+	row := readDB.QueryRow(stmtRetrievePostsCountByTag, tagId)
 	err := row.Scan(&count)
 	if err != nil {
 		return 0, err
@@ -201,10 +201,10 @@ func RetrieveNumberOfPostsByTag(tag_id int64) (int64, error) {
 	return count, nil
 }
 
-func retrievePostCreationDateById(post_id int64) (*time.Time, error) {
+func retrievePostCreationDateById(postId int64) (*time.Time, error) {
 	var creationDate time.Time
 	// Retrieve number of posts
-	row := readDB.QueryRow(stmtRetrievePostCreationDateById, post_id)
+	row := readDB.QueryRow(stmtRetrievePostCreationDateById, postId)
 	err := row.Scan(&creationDate)
 	if err != nil {
 		return &creationDate, err

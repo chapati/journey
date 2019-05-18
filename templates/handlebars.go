@@ -218,7 +218,7 @@ func pagesFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return []byte(strconv.FormatInt(maxPages, 10))
 }
 
-func page_urlFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func pageUrlFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	if len(helper.Arguments) != 0 {
 		if helper.Arguments[0].Name == "prev" || helper.Arguments[0].Name == "pagination.prev" {
 			if values.CurrentIndexPage > 1 {
@@ -310,7 +310,7 @@ func featuredFunc(helper *structure.Helper, values *structure.RequestData) []byt
 	return []byte{}
 }
 
-func body_classFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func bodyClassFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentTemplate == 1 { // post
 		// TODO: is there anything else that needs to be output here?
 		var buffer bytes.Buffer
@@ -352,7 +352,7 @@ func body_classFunc(helper *structure.Helper, values *structure.RequestData) []b
 	return []byte("post-template")
 }
 
-func ghost_headFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func ghostHeadFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	// SEO stuff:
 	// Output canonical url
 	var buffer bytes.Buffer
@@ -364,12 +364,12 @@ func ghost_headFunc(helper *structure.Helper, values *structure.RequestData) []b
 	return buffer.Bytes()
 }
 
-func ghost_footFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func ghostFootFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	// TODO: customized code injection
 	return []byte{}
 }
 
-func meta_titleFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func metaTitleFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	if values.CurrentTemplate == 1 { // post or page
 		return evaluateEscape(values.Posts[values.CurrentPostIndex].Title, helper.Unescaped)
 	} else if values.CurrentTemplate == 3 { // author
@@ -391,7 +391,7 @@ func meta_titleFunc(helper *structure.Helper, values *structure.RequestData) []b
 	return evaluateEscape(values.Blog.Title, helper.Unescaped)
 }
 
-func meta_descriptionFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func metaDescriptionFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	// TODO: Finish this
 	if values.CurrentTemplate == 1 || values.CurrentHelperContext == 1 { // post
 		return evaluateEscape(values.Posts[values.CurrentPostIndex].MetaDescription, helper.Unescaped)
@@ -554,7 +554,7 @@ func tagsFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	return []byte{}
 }
 
-func post_classFunc(helper *structure.Helper, values *structure.RequestData) []byte {
+func postClassFunc(helper *structure.Helper, values *structure.RequestData) []byte {
 	var buffer bytes.Buffer
 	buffer.WriteString("post")
 	if values.Posts[values.CurrentPostIndex].IsFeatured {

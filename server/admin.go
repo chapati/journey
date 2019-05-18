@@ -192,13 +192,13 @@ func apiPostsHandler(w http.ResponseWriter, r *http.Request, params map[string]s
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		json, err := json.Marshal(postsToJson(posts))
+		jsonBytes, err := json.Marshal(postsToJson(posts))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -222,13 +222,13 @@ func getApiPostHandler(w http.ResponseWriter, r *http.Request, params map[string
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		json, err := json.Marshal(postToJson(post))
+		jsonBytes, err := json.Marshal(postToJson(post))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -247,20 +247,20 @@ func postApiPostHandler(w http.ResponseWriter, r *http.Request, _ map[string]str
 		}
 		// Create post
 		decoder := json.NewDecoder(r.Body)
-		var json JsonPost
-		err = decoder.Decode(&json)
+		var jsonPost JsonPost
+		err = decoder.Decode(&jsonPost)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		var postSlug string
-		if json.Slug != "" { // Ceck if user has submitted a custom slug
-			postSlug = slug.Generate(json.Slug, "posts")
+		if jsonPost.Slug != "" { // Check if user has submitted a custom slug
+			postSlug = slug.Generate(jsonPost.Slug, "posts")
 		} else {
-			postSlug = slug.Generate(json.Title, "posts")
+			postSlug = slug.Generate(jsonPost.Title, "posts")
 		}
 		currentTime := date.GetCurrentTime()
-		post := structure.Post{Title: []byte(json.Title), Slug: postSlug, Markdown: []byte(json.Markdown), Html: conversion.GenerateHtmlFromMarkdown([]byte(json.Markdown)), IsFeatured: json.IsFeatured, IsPage: json.IsPage, IsPublished: json.IsPublished, MetaDescription: []byte(json.MetaDescription), Image: []byte(json.Image), Date: &currentTime, Tags: methods.GenerateTagsFromCommaString(json.Tags), Author: &structure.User{Id: userId}}
+		post := structure.Post{Title: []byte(jsonPost.Title), Slug: postSlug, Markdown: []byte(jsonPost.Markdown), Html: conversion.GenerateHtmlFromMarkdown([]byte(jsonPost.Markdown)), IsFeatured: jsonPost.IsFeatured, IsPage: jsonPost.IsPage, IsPublished: jsonPost.IsPublished, MetaDescription: []byte(jsonPost.MetaDescription), Image: []byte(jsonPost.Image), Date: &currentTime, Tags: methods.GenerateTagsFromCommaString(jsonPost.Tags), Author: &structure.User{Id: userId}}
 		err = methods.SavePost(&post)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -286,26 +286,26 @@ func patchApiPostHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 		}
 		// Update post
 		decoder := json.NewDecoder(r.Body)
-		var json JsonPost
-		err = decoder.Decode(&json)
+		var jsonPost JsonPost
+		err = decoder.Decode(&jsonPost)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		var postSlug string
 		// Get current slug of post
-		post, err := database.RetrievePostById(json.Id)
+		post, err := database.RetrievePostById(jsonPost.Id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if json.Slug != post.Slug { // Check if user has submitted a custom slug
-			postSlug = slug.Generate(json.Slug, "posts")
+		if jsonPost.Slug != post.Slug { // Check if user has submitted a custom slug
+			postSlug = slug.Generate(jsonPost.Slug, "posts")
 		} else {
 			postSlug = post.Slug
 		}
 		currentTime := date.GetCurrentTime()
-		*post = structure.Post{Id: json.Id, Title: []byte(json.Title), Slug: postSlug, Markdown: []byte(json.Markdown), Html: conversion.GenerateHtmlFromMarkdown([]byte(json.Markdown)), IsFeatured: json.IsFeatured, IsPage: json.IsPage, IsPublished: json.IsPublished, MetaDescription: []byte(json.MetaDescription), Image: []byte(json.Image), Date: &currentTime, Tags: methods.GenerateTagsFromCommaString(json.Tags), Author: &structure.User{Id: userId}}
+		*post = structure.Post{Id: jsonPost.Id, Title: []byte(jsonPost.Title), Slug: postSlug, Markdown: []byte(jsonPost.Markdown), Html: conversion.GenerateHtmlFromMarkdown([]byte(jsonPost.Markdown)), IsFeatured: jsonPost.IsFeatured, IsPage: jsonPost.IsPage, IsPublished: jsonPost.IsPublished, MetaDescription: []byte(jsonPost.MetaDescription), Image: []byte(jsonPost.Image), Date: &currentTime, Tags: methods.GenerateTagsFromCommaString(jsonPost.Tags), Author: &structure.User{Id: userId}}
 		err = methods.UpdatePost(post)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -390,13 +390,13 @@ func apiUploadHandler(w http.ResponseWriter, r *http.Request, _ map[string]strin
 			filePath = filepath.ToSlash(filePath)
 			allFilePaths = append(allFilePaths, filePath)
 		}
-		json, err := json.Marshal(allFilePaths)
+		jsonBytes, err := json.Marshal(allFilePaths)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -445,13 +445,13 @@ func apiImagesHandler(w http.ResponseWriter, r *http.Request, params map[string]
 		if end > len(images) {
 			end = len(images)
 		}
-		json, err := json.Marshal(images[start:end])
+		jsonBytes, err := json.Marshal(images[start:end])
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -465,14 +465,14 @@ func deleteApiImageHandler(w http.ResponseWriter, r *http.Request, _ map[string]
 	if userName != "" { // TODO: Check if the user has permissions to delete the image
 		// Get the file name from the json data
 		decoder := json.NewDecoder(r.Body)
-		var json JsonImage
-		err := decoder.Decode(&json)
+		var jsonImg JsonImage
+		err := decoder.Decode(&jsonImg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		err = filepath.Walk(filenames.ImagesFilepath, func(filePath string, info os.FileInfo, err error) error {
-			if !info.IsDir() && filepath.Base(filePath) == filepath.Base(json.Filename) {
+			if !info.IsDir() && filepath.Base(filePath) == filepath.Base(jsonImg.Filename) {
 				err := os.Remove(filePath)
 				if err != nil {
 					return err
@@ -501,13 +501,13 @@ func getApiBlogHandler(w http.ResponseWriter, r *http.Request, _ map[string]stri
 		methods.Blog.RLock()
 		defer methods.Blog.RUnlock()
 		blogJson := blogToJson(methods.Blog)
-		json, err := json.Marshal(blogJson)
+		jsonBytes, err := json.Marshal(blogJson)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -525,23 +525,23 @@ func patchApiBlogHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			return
 		}
 		decoder := json.NewDecoder(r.Body)
-		var json JsonBlog
-		err = decoder.Decode(&json)
+		var jsonPost JsonBlog
+		err = decoder.Decode(&jsonPost)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		// Make sure postPerPage is over 0
-		if json.PostsPerPage < 1 {
-			json.PostsPerPage = 1
+		if jsonPost.PostsPerPage < 1 {
+			jsonPost.PostsPerPage = 1
 		}
 		// Remove blog url in front of navigation urls
-		for index := range json.NavigationItems {
-			if strings.HasPrefix(json.NavigationItems[index].Url, json.Url) {
-				json.NavigationItems[index].Url = strings.Replace(json.NavigationItems[index].Url, json.Url, "", 1)
+		for index := range jsonPost.NavigationItems {
+			if strings.HasPrefix(jsonPost.NavigationItems[index].Url, jsonPost.Url) {
+				jsonPost.NavigationItems[index].Url = strings.Replace(jsonPost.NavigationItems[index].Url, jsonPost.Url, "", 1)
 				// If we removed the blog url, there should be a / in front of the url
-				if !strings.HasPrefix(json.NavigationItems[index].Url, "/") {
-					json.NavigationItems[index].Url = "/" + json.NavigationItems[index].Url
+				if !strings.HasPrefix(jsonPost.NavigationItems[index].Url, "/") {
+					jsonPost.NavigationItems[index].Url = "/" + jsonPost.NavigationItems[index].Url
 				}
 			}
 		}
@@ -551,7 +551,7 @@ func patchApiBlogHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		tempBlog := structure.Blog{Url: []byte(configuration.Config.Url), Title: []byte(json.Title), Description: []byte(json.Description), Logo: []byte(json.Logo), Cover: []byte(json.Cover), AssetPath: []byte("/assets/"), PostCount: blog.PostCount, PostsPerPage: json.PostsPerPage, ActiveTheme: json.ActiveTheme, NavigationItems: json.NavigationItems}
+		tempBlog := structure.Blog{Url: []byte(configuration.Config.Url), Title: []byte(jsonPost.Title), Description: []byte(jsonPost.Description), Logo: []byte(jsonPost.Logo), Cover: []byte(jsonPost.Cover), AssetPath: []byte("/assets/"), PostCount: blog.PostCount, PostsPerPage: jsonPost.PostsPerPage, ActiveTheme: jsonPost.ActiveTheme, NavigationItems: jsonPost.NavigationItems}
 		err = methods.UpdateBlog(&tempBlog, userId)
 		// Check if active theme setting has been changed, if so, generate templates from new theme
 		if tempBlog.ActiveTheme != blog.ActiveTheme {
@@ -600,13 +600,13 @@ func getApiUserHandler(w http.ResponseWriter, r *http.Request, params map[string
 			return
 		}
 		userJson := userToJson(user)
-		json, err := json.Marshal(userJson)
+		jsonBytes, err := json.Marshal(userJson)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)
@@ -624,77 +624,77 @@ func patchApiUserHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			return
 		}
 		decoder := json.NewDecoder(r.Body)
-		var json JsonUser
-		err = decoder.Decode(&json)
+		var jsonPost JsonUser
+		err = decoder.Decode(&jsonPost)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		// Make sure user id is over 0
-		if json.Id < 1 {
+		if jsonPost.Id < 1 {
 			http.Error(w, "Wrong user id.", http.StatusInternalServerError)
 			return
-		} else if userId != json.Id { // Make sure the authenticated user is only changing his/her own data. TODO: Make sure the user is admin when multiple users have been introduced
+		} else if userId != jsonPost.Id { // Make sure the authenticated user is only changing his/her own data. TODO: Make sure the user is admin when multiple users have been introduced
 			http.Error(w, "You don't have permission to change this data.", http.StatusInternalServerError)
 			return
 		}
 		// Get old user data to compare
-		tempUser, err := database.RetrieveUser(json.Id)
+		tempUser, err := database.RetrieveUser(jsonPost.Id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		// Make sure user email is provided
-		if json.Email == "" {
-			json.Email = string(tempUser.Email)
+		if jsonPost.Email == "" {
+			jsonPost.Email = string(tempUser.Email)
 		}
 		// Make sure user name is provided
-		if json.Name == "" {
-			json.Name = string(tempUser.Name)
+		if jsonPost.Name == "" {
+			jsonPost.Name = string(tempUser.Name)
 		}
 		// Make sure user slug is provided
-		if json.Slug == "" {
-			json.Slug = tempUser.Slug
+		if jsonPost.Slug == "" {
+			jsonPost.Slug = tempUser.Slug
 		}
 		// Check if new name is already taken
-		if json.Name != string(tempUser.Name) {
-			_, err = database.RetrieveUserByName([]byte(json.Name))
+		if jsonPost.Name != string(tempUser.Name) {
+			_, err = database.RetrieveUserByName([]byte(jsonPost.Name))
 			if err == nil {
 				// The new user name is already taken. Assign the old name.
 				// TODO: Return error that will be displayed in the admin interface.
-				json.Name = string(tempUser.Name)
+				jsonPost.Name = string(tempUser.Name)
 			}
 		}
 		// Check if new slug is already taken
-		if json.Slug != tempUser.Slug {
-			_, err = database.RetrieveUserBySlug(json.Slug)
+		if jsonPost.Slug != tempUser.Slug {
+			_, err = database.RetrieveUserBySlug(jsonPost.Slug)
 			if err == nil {
 				// The new user slug is already taken. Assign the old slug.
 				// TODO: Return error that will be displayed in the admin interface.
-				json.Slug = tempUser.Slug
+				jsonPost.Slug = tempUser.Slug
 			}
 		}
-		user := structure.User{Id: json.Id, Name: []byte(json.Name), Slug: json.Slug, Email: []byte(json.Email), Image: []byte(json.Image), Cover: []byte(json.Cover), Bio: []byte(json.Bio), Website: []byte(json.Website), Location: []byte(json.Location)}
+		user := structure.User{Id: jsonPost.Id, Name: []byte(jsonPost.Name), Slug: jsonPost.Slug, Email: []byte(jsonPost.Email), Image: []byte(jsonPost.Image), Cover: []byte(jsonPost.Cover), Bio: []byte(jsonPost.Bio), Website: []byte(jsonPost.Website), Location: []byte(jsonPost.Location)}
 		err = methods.UpdateUser(&user, userId)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if json.Password != "" && (json.Password == json.PasswordRepeated) { // Update password if a new one was submitted
-			encryptedPassword, err := authentication.EncryptPassword(json.Password)
+		if jsonPost.Password != "" && (jsonPost.Password == jsonPost.PasswordRepeated) { // Update password if a new one was submitted
+			encryptedPassword, err := authentication.EncryptPassword(jsonPost.Password)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			err = database.UpdateUserPassword(user.Id, encryptedPassword, date.GetCurrentTime(), json.Id)
+			err = database.UpdateUserPassword(user.Id, encryptedPassword, date.GetCurrentTime(), jsonPost.Id)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 		}
 		// Check if the user name was changed. If so, update the session cookie to the new user name.
-		if json.Name != string(tempUser.Name) {
-			logInUser(json.Name, w)
+		if jsonPost.Name != string(tempUser.Name) {
+			logInUser(jsonPost.Name, w)
 		}
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("User settings updated!"))
@@ -715,13 +715,13 @@ func getApiUserIdHandler(w http.ResponseWriter, r *http.Request, _ map[string]st
 			return
 		}
 		jsonUserId := JsonUserId{Id: userId}
-		json, err := json.Marshal(jsonUserId)
+		jsonBytes, err := json.Marshal(jsonUserId)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		w.Write(jsonBytes)
 		return
 	} else {
 		http.Error(w, "Not logged in!", http.StatusInternalServerError)

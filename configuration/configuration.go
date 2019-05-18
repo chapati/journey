@@ -93,7 +93,7 @@ func (c *Configuration) load() error {
 	for i := 0; i < cReflected.NumField(); i++ {
 		if cReflected.Field(i).Interface() == "" {
 			log.Println("Error: " + filenames.ConfigFilename + " is corrupted. Did you fill out all of the fields?")
-			return errors.New("Error: Configuration corrupted.")
+			return errors.New("Error: Configuration corrupted")
 		}
 	}
 	// Save the changed config

@@ -25,7 +25,7 @@ func Generate(input string, table string) string {
 	if len([]rune(output)) > maxLength {
 		runes := []rune(output)[:maxLength]
 		// Try to cut at '-' until length of (maxLength - (maxLength / 2)) characters
-		for i := (maxLength - 1); i > (maxLength - (maxLength / 2)); i-- {
+		for i := maxLength - 1; i > (maxLength - (maxLength / 2)); i-- {
 			if runes[i] == '-' {
 				runes = runes[:i]
 				break

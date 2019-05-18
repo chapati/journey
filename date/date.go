@@ -195,7 +195,7 @@ func replaceMM(date *time.Time) string {
 
 func replaceDDDD(date *time.Time) string {
 	var buffer bytes.Buffer
-	startOfYear := time.Date((date.Year() - 1), time.December, 31, 0, 0, 0, 0, time.UTC)
+	startOfYear := time.Date(date.Year()-1, time.December, 31, 0, 0, 0, 0, time.UTC)
 	days := int(date.Sub(startOfYear) / (24 * time.Hour))
 	if days < 10 {
 		buffer.WriteString("00")
@@ -207,7 +207,7 @@ func replaceDDDD(date *time.Time) string {
 }
 
 func replaceDDD(date *time.Time) string {
-	startOfYear := time.Date((date.Year() - 1), time.December, 31, 0, 0, 0, 0, time.UTC)
+	startOfYear := time.Date(date.Year()-1, time.December, 31, 0, 0, 0, 0, time.UTC)
 	return strconv.Itoa(int(date.Sub(startOfYear) / (24 * time.Hour)))
 }
 
@@ -239,7 +239,7 @@ func replaceDo(date *time.Time) string {
 
 func replaceww(date *time.Time) string {
 	var buffer bytes.Buffer
-	startOfYear := time.Date((date.Year() - 1), time.December, 25, 0, 0, 0, 0, time.UTC)
+	startOfYear := time.Date(date.Year()-1, time.December, 25, 0, 0, 0, 0, time.UTC)
 	weeks := int(date.Sub(startOfYear) / (24 * time.Hour * 7))
 	if weeks < 10 {
 		buffer.WriteString("0")
@@ -249,7 +249,7 @@ func replaceww(date *time.Time) string {
 }
 
 func replacew(date *time.Time) string {
-	startOfYear := time.Date((date.Year() - 1), time.December, 25, 0, 0, 0, 0, time.UTC)
+	startOfYear := time.Date(date.Year()-1, time.December, 25, 0, 0, 0, 0, time.UTC)
 	return strconv.Itoa(int(date.Sub(startOfYear) / (24 * time.Hour * 7)))
 }
 

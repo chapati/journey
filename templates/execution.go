@@ -72,7 +72,7 @@ func ShowAuthorTemplate(writer http.ResponseWriter, r *http.Request, slug string
 	if err != nil {
 		return err
 	}
-	posts, err := database.RetrievePostsByUser(author.Id, methods.Blog.PostsPerPage, (methods.Blog.PostsPerPage * postIndex))
+	posts, err := database.RetrievePostsByUser(author.Id, methods.Blog.PostsPerPage, methods.Blog.PostsPerPage*postIndex)
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func ShowTagTemplate(writer http.ResponseWriter, r *http.Request, slug string, p
 	if err != nil {
 		return err
 	}
-	posts, err := database.RetrievePostsByTag(tag.Id, methods.Blog.PostsPerPage, (methods.Blog.PostsPerPage * postIndex))
+	posts, err := database.RetrievePostsByTag(tag.Id, methods.Blog.PostsPerPage, methods.Blog.PostsPerPage*postIndex)
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func ShowIndexTemplate(w http.ResponseWriter, r *http.Request, page int) error {
 	if postIndex < 0 {
 		postIndex = 0
 	}
-	posts, err := database.RetrievePostsForIndex(methods.Blog.PostsPerPage, (methods.Blog.PostsPerPage * postIndex))
+	posts, err := database.RetrievePostsForIndex(methods.Blog.PostsPerPage, methods.Blog.PostsPerPage*postIndex)
 	if err != nil {
 		return err
 	}

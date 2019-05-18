@@ -187,7 +187,7 @@ func apiPostsHandler(w http.ResponseWriter, r *http.Request, params map[string]s
 			return
 		}
 		postsPerPage := int64(15)
-		posts, err := database.RetrievePostsForApi(postsPerPage, ((int64(page) - 1) * postsPerPage))
+		posts, err := database.RetrievePostsForApi(postsPerPage, (int64(page)-1)*postsPerPage)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

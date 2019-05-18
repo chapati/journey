@@ -81,6 +81,12 @@
 			"revisionTime": "2017-01-19T02:36:43Z"
 		},
 		{
+			"checksumSHA1": "31Q46st1pd0VJJmD7yQFHKB8jrE=",
+			"path": "golang.org/x/crypto/acme",
+			"revision": "22d7a77e9e5f409e934ed268692e56707cd169e5",
+			"revisionTime": "2019-04-19T16:04:53Z"
+		},
+		{
 			"checksumSHA1": "4z75fxISOgKOmbS/X+qcTCXdyCs=",
 			"path": "golang.org/x/crypto/acme/autocert",
 			"revision": "9419663f5a44be8b34ca85f08abc5fe1be11f8a3",
@@ -117,5 +123,5 @@
 			"revisionTime": "2016-10-11T02:33:12Z"
 		}
 	],
-	"rootPath": "github.com/kabukky/journey"
+	"rootPath": "journey"
 }
